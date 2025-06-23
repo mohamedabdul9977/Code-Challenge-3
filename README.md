@@ -35,7 +35,7 @@ A simple blog post management application that allows users to view, create, edi
 1. Clone the repository:
 
 ```
-git clone https://github.com/your-username/blog-post-manager.git
+git clone https://github.com/your-username/Code-Challenge-3.git
 cd Code-Challenge-3
 ```
 
