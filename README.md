@@ -35,7 +35,6 @@ A simple blog post management application that allows users to view, create, edi
 1. Clone the repository:
 
 ```
-bash
 git clone https://github.com/your-username/blog-post-manager.git
 cd blog-post-manager
 ```
@@ -43,14 +42,12 @@ cd blog-post-manager
 2. Install JSON Server globally:
 
 ```
-bash
 npm install -g json-server@0.17.4
 ```
 
 3. Start the JSON Server (in one terminal window):
 
 ```
-bash
 json-server --watch db.json
 ```
 
@@ -61,7 +58,7 @@ You can use a live server extension in VS Code
 Or simply open the index.html file directly in your browser
 
 ## Project Structure
-text
+```
 blog-post-manager/
 ├── index.html          # Main HTML file
 ├── src/
@@ -70,6 +67,7 @@ blog-post-manager/
 │   └── styles.css     # Stylesheet
 ├── db.json            # Database file for JSON Server
 └── README.md          # This file
+```
 
 ## API Endpoints
 The application uses the following endpoints from the JSON Server:
