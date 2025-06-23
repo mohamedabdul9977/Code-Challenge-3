@@ -36,7 +36,7 @@ A simple blog post management application that allows users to view, create, edi
 
 ```
 git clone https://github.com/your-username/blog-post-manager.git
-cd blog-post-manager
+cd Code-Challenge-3
 ```
 
 2. Install JSON Server globally:
