@@ -4,25 +4,8 @@
       "id": "69d5",
       "title": "Mohamed's Blog",
       "content": "This is my blog",
-      "author": "Mohamed Abdulrashid"
-    },
-    {
-      "id": "ea03",
-      "title": "Okumu's Blog",
-      "content": "Hi, I am a teaching mentor, and this is my blog",
-      "author": "George Okumu"
-    },
-    {
-      "id": "a36c",
-      "title": "Hamza's Blog",
-      "content": "Hi, this is Hamza and this is my blog",
-      "author": "Hamza Ahmed"
-    },
-    {
-      "id": "6db4",
-      "title": "Suleiman's Blog",
-      "content": "Hi, my name is Suleiman and this is my blog",
-      "author": "Suleiman Bakai"
+      "author": "Mohamed Abdulrashid",
+      "image": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
     }
   ]
 }

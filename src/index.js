@@ -13,7 +13,7 @@ function main() {
     }, 300);
 }
 
-// Display all posts in the post list
+// Display all posts in the post list with thumbnails
 function displayPosts() {
     fetch('http://localhost:3000/posts')
         .then(response => response.json())
@@ -24,7 +24,12 @@ function displayPosts() {
             posts.forEach(post => {
                 const postItem = document.createElement('div');
                 postItem.className = 'post-item';
-                postItem.innerHTML = `<h3>${post.title}</h3>`;
+                postItem.innerHTML = `
+                    <div class="post-thumbnail">
+                        ${post.image ? `<img src="${post.image}" alt="${post.title}">` : '<div class="no-image">No Image</div>'}
+                    </div>
+                    <h3>${post.title}</h3>
+                `;
                 postItem.dataset.id = post.id;
                 
                 // Add click event to each post item
@@ -36,16 +41,19 @@ function displayPosts() {
         .catch(error => console.error('Error fetching posts:', error));
 }
 
-// Handle click on a post to show its details
+// Handle click on a post to show its details with image
 function handlePostClick(postId) {
     fetch(`http://localhost:3000/posts/${postId}`)
         .then(response => response.json())
         .then(post => {
             const postDetail = document.getElementById('post-detail');
             postDetail.innerHTML = `
-                <h2>${post.title}</h2>
+                <div class="post-header">
+                    <h2>${post.title}</h2>
+                    ${post.image ? `<img src="${post.image}" alt="${post.title}" class="post-image">` : ''}
+                </div>
                 <p><strong>Author:</strong> ${post.author}</p>
-                <p>${post.content}</p>
+                <div class="post-content">${post.content}</div>
                 <div class="post-actions">
                     <button class="edit-btn" data-id="${post.id}">Edit</button>
                     <button class="delete-btn" data-id="${post.id}">Delete</button>
@@ -60,7 +68,9 @@ function handlePostClick(postId) {
             
             document.querySelector('.delete-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                deletePost(post.id);
+                if (confirm('Are you sure you want to delete this post?')) {
+                    deletePost(post.id);
+                }
             });
         })
         .catch(error => console.error('Error fetching post details:', error));
@@ -71,11 +81,12 @@ function showEditForm(post) {
     const editForm = document.getElementById('edit-post-form');
     document.getElementById('edit-title').value = post.title;
     document.getElementById('edit-content').value = post.content;
+    document.getElementById('edit-image').value = post.image || '';
     editForm.dataset.id = post.id;
     editForm.classList.remove('hidden');
 }
 
-// Setup edit form event listeners
+// Setup edit form submission
 function setupEditForm() {
     const editForm = document.getElementById('edit-post-form');
     const cancelEdit = document.getElementById('cancel-edit');
@@ -85,11 +96,11 @@ function setupEditForm() {
         const postId = editForm.dataset.id;
         const updatedPost = {
             title: document.getElementById('edit-title').value,
-            content: document.getElementById('edit-content').value
+            content: document.getElementById('edit-content').value,
+            image: document.getElementById('edit-image').value || null
         };
         
         updatePost(postId, updatedPost);
-        editForm.classList.add('hidden');
     });
     
     cancelEdit.addEventListener('click', () => {
@@ -106,21 +117,22 @@ function updatePost(postId, updatedPost) {
         },
         body: JSON.stringify(updatedPost)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update post');
+        }
+        return response.json();
+    })
     .then(updatedPost => {
         // Refresh the posts list and show updated post
         displayPosts();
-        document.getElementById('post-detail').innerHTML = `
-            <h2>${updatedPost.title}</h2>
-            <p><strong>Author:</strong> ${updatedPost.author}</p>
-            <p>${updatedPost.content}</p>
-            <div class="post-actions">
-                <button class="edit-btn" data-id="${updatedPost.id}">Edit</button>
-                <button class="delete-btn" data-id="${updatedPost.id}">Delete</button>
-            </div>
-        `;
+        handlePostClick(postId);
+        document.getElementById('edit-post-form').classList.add('hidden');
     })
-    .catch(error => console.error('Error updating post:', error));
+    .catch(error => {
+        console.error('Error updating post:', error);
+        alert('Failed to update post. Please try again.');
+    });
 }
 
 // Delete post
@@ -128,12 +140,18 @@ function deletePost(postId) {
     fetch(`http://localhost:3000/posts/${postId}`, {
         method: 'DELETE'
     })
-    .then(() => {
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete post');
+        }
         // Refresh the posts list and clear details
         displayPosts();
         document.getElementById('post-detail').innerHTML = '<p>Select a post to view details</p>';
     })
-    .catch(error => console.error('Error deleting post:', error));
+    .catch(error => {
+        console.error('Error deleting post:', error);
+        alert('Failed to delete post. Please try again.');
+    });
 }
 
 // Add event listener for new post form submission
@@ -145,12 +163,14 @@ function addNewPostListener() {
         const title = document.getElementById('title').value;
         const content = document.getElementById('content').value;
         const author = document.getElementById('author').value;
+        const image = document.getElementById('image').value;
         
-        // Create new post object
+        // Create new post object with image
         const newPost = {
             title,
             content,
-            author
+            author,
+            image: image || null
         };
         
         // Send POST request to API
@@ -161,14 +181,22 @@ function addNewPostListener() {
             },
             body: JSON.stringify(newPost)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to create post');
+            }
+            return response.json();
+        })
         .then(post => {
             // Refresh the posts list
             displayPosts();
             // Clear form
             form.reset();
         })
-        .catch(error => console.error('Error creating post:', error));
+        .catch(error => {
+            console.error('Error creating post:', error);
+            alert('Failed to create post. Please try again.');
+        });
     });
 }
 
